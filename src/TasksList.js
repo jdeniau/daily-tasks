@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 
 class TaskList extends Component {
   constructor(props) {
@@ -17,16 +18,20 @@ class TaskList extends Component {
     const { tasks } = this.props;
 
     return (
-      <div>
+      <View>
         <ul>
           {tasks.getTaskNameList().map(name =>
             <li key={name}>
-              {name}
-              {tasks.getLastExecutionDate(name) && tasks.getLastExecutionDate(name)}
+              <View>{name}</View>
+              <View>
+                {tasks.getLastExecutionDate(name) && tasks.getLastExecutionDate(name)}
+              </View>
 
-              <a href={`#execute-${name}`} onClick={() => this.props.tasks.execute(name)}>
-                execute
-              </a>
+              <View>
+                <a href={`#execute-${name}`} onClick={() => this.props.tasks.execute(name)}>
+                  execute
+                </a>
+              </View>
             </li>
           )}
         </ul>
@@ -38,7 +43,7 @@ class TaskList extends Component {
           />
           <button type="submit">Add</button>
         </form>
-      </div>
+      </View>
     );
   }
 }

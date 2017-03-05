@@ -12,6 +12,13 @@ class TaskSaver {
 }
 tasks.addListener(new TaskSaver());
 
+class TaskLogger {
+  onChange(tasks) {
+    console.log(tasks.tasks);
+  }
+}
+tasks.addListener(new TaskLogger());
+
 class App extends Component {
   componentDidMount() {
     const updater = {

@@ -40,7 +40,7 @@ class Tasks {
       return null;
     }
 
-    if (task.executionDateList.length <= 1) {
+    if (task.executionDateList.length <= 0) {
       return null;
     }
 
