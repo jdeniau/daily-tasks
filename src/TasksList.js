@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import moment from 'moment';
+import { View, Text } from 'react-native';
 
 class TaskList extends Component {
   constructor(props) {
@@ -23,8 +24,19 @@ class TaskList extends Component {
           {tasks.getTaskNameList().map(name =>
             <li key={name}>
               <View>{name}</View>
+
               <View>
-                {tasks.getLastExecutionDate(name) && tasks.getLastExecutionDate(name)}
+                <Text>
+                  Last execution:
+                  {tasks.getLastExecutionDate(name) && moment(tasks.getLastExecutionDate(name)).fromNow()}
+                </Text>
+              </View>
+
+              <View>
+                <Text>
+                  Frequency:
+                  {tasks.getAverageExectionInterval(name)}
+                </Text>
               </View>
 
               <View>
