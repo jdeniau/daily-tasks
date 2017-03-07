@@ -35,7 +35,14 @@ class TaskList extends Component {
               <View>
                 <Text>
                   Frequency:
-                  {tasks.getAverageExectionInterval(name)}
+                  {tasks.getHumanizedAverageExectionInterval(name)}
+                </Text>
+              </View>
+
+              <View>
+                <Text>
+                  Next execution:
+                  {tasks.getNextExecutionDate(name)}
                 </Text>
               </View>
 

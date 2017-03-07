@@ -47,6 +47,19 @@ class Tasks {
     return task.executionDateList.slice(-1)[0];
   }
 
+  getNextExecutionDate(taskName) {
+    const lastExecution = this.getLastExecutionDate(taskName);
+
+    if (!lastExecution) {
+      return null;
+    }
+
+    const nextExecution = moment(lastExecution)
+      .add(this.getAverageExectionInterval(taskName));
+
+    return nextExecution.fromNow();
+  }
+
   getAverageExectionInterval(taskName) {
     const task = this.tasks[taskName];
 
@@ -80,7 +93,13 @@ class Tasks {
     const tmpTotal = tmpTotalMs / 1000;
     console.log(intervalList, tmpTotal, tmpTotal / intervalList.length);
 
-    return moment.duration(tmpTotal / intervalList.length, 'seconds').humanize();
+    return moment.duration(tmpTotal / intervalList.length, 'seconds');
+  }
+
+  getHumanizedAverageExectionInterval(taskName) {
+    const average = this.getAverageExectionInterval(taskName);
+
+    return average && average.humanize();
   }
 
   export(prettyPrint = false) {
