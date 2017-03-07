@@ -83,6 +83,17 @@ class Tasks {
     return moment.duration(tmpTotal / intervalList.length, 'seconds').humanize();
   }
 
+  export(prettyPrint = false) {
+    return prettyPrint ?
+      JSON.stringify(this.tasks, null, 2) :
+      JSON.stringify(this.tasks);
+  }
+
+  import(string) {
+    this.tasks = JSON.parse(string);
+    this._notifyListener();
+  }
+
   _notifyListener() {
     this._listeners.forEach(listener => listener.onChange(this));
   }

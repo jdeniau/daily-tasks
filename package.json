@@ -9,6 +9,7 @@
     "react-native-web": "^0.0.75"
   },
   "devDependencies": {
+    "highlight.js": "^9.9.0",
     "react-scripts": "0.9.3"
   },
   "scripts": {
