@@ -1,77 +1,25 @@
 import moment from 'moment';
 
-class Tasks {
-  constructor(tasks = {}) {
-    this.tasks = tasks || {};
-    this._listeners = [];
+class Task {
+  constructor(values) {
+    this.name = values.name;
+    this.executionDateList = values.executionDateList;
   }
 
-  addListener(listener) {
-    this._listeners.push(listener);
-  }
-
-  addTask(name) {
-    this.tasks[name] = {
-      executionDateList: [],
-    };
-
-    this._notifyListener();
-  }
-
-  clearTasks() {
-    this.tasks = {};
-    this._notifyListener();
-  }
-
-  getTaskNameList() {
-    return Object.keys(this.tasks);
-  }
-
-  execute(taskName) {
-    this.tasks[taskName].executionDateList.push(moment().toISOString());
-    this.tasks[taskName].executionDateList = this.tasks[taskName].executionDateList.slice(-10);
-    this._notifyListener();
-  }
-
-  getLastExecutionDate(taskName) {
-    const task = this.tasks[taskName];
-
-    if (!task) {
+  getLastExecutionDate() {
+    if (this.executionDateList.length <= 0) {
       return null;
     }
 
-    if (task.executionDateList.length <= 0) {
-      return null;
-    }
-
-    return task.executionDateList.slice(-1)[0];
+    return this.executionDateList.slice(-1)[0];
   }
 
-  getNextExecutionDate(taskName) {
-    const lastExecution = this.getLastExecutionDate(taskName);
-
-    if (!lastExecution) {
+  getAverageExectionInterval() {
+    if (this.executionDateList.length <= 0) {
       return null;
     }
 
-    const nextExecution = moment(lastExecution)
-      .add(this.getAverageExectionInterval(taskName));
-
-    return nextExecution.fromNow();
-  }
-
-  getAverageExectionInterval(taskName) {
-    const task = this.tasks[taskName];
-
-    if (!task) {
-      return null;
-    }
-
-    if (task.executionDateList.length <= 0) {
-      return null;
-    }
-
-    const intervalList = task.executionDateList
+    const intervalList = this.executionDateList
       .map(date => moment(date).valueOf())
       .map((timestamp, index, executionList) => {
         const lastValue = executionList[index - 1];
@@ -91,31 +39,108 @@ class Tasks {
       .reduce((out, interval) => out += parseInt(intervalList, 10), 0)
     ;
     const tmpTotal = tmpTotalMs / 1000;
-    console.log(intervalList, tmpTotal, tmpTotal / intervalList.length);
 
     return moment.duration(tmpTotal / intervalList.length, 'seconds');
   }
 
-  getHumanizedAverageExectionInterval(taskName) {
-    const average = this.getAverageExectionInterval(taskName);
+  getHumanizedAverageExectionInterval() {
+    const average = this.getAverageExectionInterval();
 
     return average && average.humanize();
   }
 
+  getNextExecutionDate() {
+    if (this.executionDateList.length < 2) {
+      return null;
+    }
+
+    const lastExecution = this.getLastExecutionDate();
+
+    const nextExecution = moment(lastExecution)
+      .add(this.getAverageExectionInterval());
+
+    return nextExecution;
+  }
+
+  isPast() {
+    const nextExecutionDate = this.getNextExecutionDate();
+    const now = moment();
+
+    return nextExecutionDate && nextExecutionDate < now;
+  }
+
+}
+
+class Tasks {
+  constructor(tasks = []) {
+    this.tasks = tasks || [];
+    this._listeners = [];
+  }
+
+  getTaskList() {
+    return this.tasks.map(values => new Task(values));
+  }
+
+  addListener(listener) {
+    this._listeners.push(listener);
+  }
+
+  addTask(name) {
+    this.tasks.push(new Task({
+      name,
+      executionDateList: [],
+    }));
+
+    this._notifyListener();
+  }
+
+  clearTasks() {
+    this.tasks = [];
+    this._notifyListener();
+  }
+
+  getTaskNameList() {
+    return this.tasks.map(t => t.name);
+  }
+
+  getTask(name) {
+    return this.tasks.find(task => name === task.name);
+  }
+
+  execute(taskName) {
+    const task = this.getTask(taskName);
+
+    task.executionDateList.push(moment().toISOString());
+    task.executionDateList = task.executionDateList.slice(-10);
+    this._notifyListener();
+  }
+
   export(prettyPrint = false) {
     return prettyPrint ?
-      JSON.stringify(this.tasks, null, 2) :
+      JSON.stringify(this.getTaskList(), null, 2) :
       JSON.stringify(this.tasks);
   }
 
   import(string) {
-    this.tasks = JSON.parse(string);
+    this.tasks = JSON.parse(string).map(task => new Task(task));
     this._notifyListener();
   }
 
   _notifyListener() {
     this._listeners.forEach(listener => listener.onChange(this));
   }
+}
+
+export function sortByNextExecutionDate(a, b) {
+  if (a.getNextExecutionDate() < b.getNextExecutionDate()) {
+    return -1;
+  }
+
+  if (a.getNextExecutionDate() > b.getNextExecutionDate()) {
+    return 1;
+  }
+
+  return 0;
 }
 
 export default Tasks;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { View, Text } from 'react-native';
+import { Alert, Button, Col, Form, FormGroup, Label, Input } from 'reactstrap';
+import { sortByNextExecutionDate } from './Tasks';
 
 class TaskList extends Component {
   constructor(props) {
@@ -19,50 +20,65 @@ class TaskList extends Component {
     const { tasks } = this.props;
 
     return (
-      <View>
-        <ul>
-          {tasks.getTaskNameList().map(name =>
-            <li key={name}>
-              <View>{name}</View>
+      <div>
+        <div>
+          {tasks.getTaskList()
+            .sort(sortByNextExecutionDate)
+              .map(task =>
+            <Alert color={task.isPast() ? 'danger' : 'success'} key={task.name}>
+              <div>{task.name}</div>
 
-              <View>
-                <Text>
-                  Last execution:
-                  {tasks.getLastExecutionDate(name) && moment(tasks.getLastExecutionDate(name)).fromNow()}
-                </Text>
-              </View>
+              <div>
+                Last execution:
+                {task.getLastExecutionDate() && moment(task.getLastExecutionDate()).fromNow()}
+              </div>
 
-              <View>
-                <Text>
-                  Frequency:
-                  {tasks.getHumanizedAverageExectionInterval(name)}
-                </Text>
-              </View>
+              <div>
+                Frequency:
+                {task.getHumanizedAverageExectionInterval()}
+              </div>
 
-              <View>
-                <Text>
-                  Next execution:
-                  {tasks.getNextExecutionDate(name)}
-                </Text>
-              </View>
+              <div>
+                Next execution:
+                {task.getNextExecutionDate() && task.getNextExecutionDate().fromNow()}
+              </div>
 
-              <View>
-                <a href={`#execute-${name}`} onClick={() => this.props.tasks.execute(name)}>
-                  execute
-                </a>
-              </View>
-            </li>
+              <Button
+                color="primary"
+                block
+                onClick={() => this.props.tasks.execute(task.name)}
+              >
+                execute
+              </Button>
+            </Alert>
           )}
-        </ul>
+        </div>
 
-        <form onSubmit={this.handleAddTask}>
-          <input
-            type="text"
-            ref={(input) => { this.taskAddInput = input; }}
-          />
-          <button type="submit">Add</button>
-        </form>
-      </View>
+        <Form onSubmit={this.handleAddTask}>
+          <FormGroup row>
+            <Label for="addTask" sm={2}>Add task</Label>
+            <Col sm={10}>
+              <Input
+                type="text"
+                id="addTask"
+                placeholder="task name"
+                getRef={(input) => { this.taskAddInput = input; }}
+              />
+            </Col>
+          </FormGroup>
+
+          <FormGroup check row>
+            <Col sm={{ size: 10, offset: 2 }}>
+              <Button
+                color="secondary"
+                type="submit"
+              >
+                Add
+              </Button>
+            </Col>
+          </FormGroup>
+        </Form>
+      </div>
     );
   }
 }

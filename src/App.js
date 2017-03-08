@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import highlight from 'highlight.js';
-import 'highlight.js/styles/solarized-light.css';
+import { Button } from 'reactstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 import Tasks from './Tasks';
 import TasksList from './TasksList';
 import DevTools from './DevTools';
 
-highlight.initHighlightingOnLoad();
+const isDev = process.env.NODE_ENV === 'development';
 
 const tasks = new Tasks(JSON.parse(window.localStorage.getItem('tasks')));
 
@@ -17,12 +17,14 @@ class TaskSaver {
 }
 tasks.addListener(new TaskSaver());
 
-class TaskLogger {
-  onChange(tasks) {
-    console.log(tasks.tasks);
+if (isDev) {
+  class TaskLogger {
+    onChange(tasks) {
+      console.log(tasks.tasks);
+    }
   }
+  tasks.addListener(new TaskLogger());
 }
-tasks.addListener(new TaskLogger());
 
 
 class App extends Component {
@@ -38,9 +40,11 @@ class App extends Component {
       <div>
         <TasksList tasks={this.props.tasks} />
 
-        <a href="#clear" onClick={() => this.props.tasks.clearTasks()}>Clear tasks</a>
+        <Button color="warning" onClick={this.props.tasks.clearTasks}>
+          Clear tasks
+        </Button>
 
-        <DevTools tasks={this.props.tasks} />
+        {isDev && <DevTools tasks={this.props.tasks} />}
       </div>
     );
   }

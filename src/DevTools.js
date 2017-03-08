@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import highlight from 'highlight.js';
+import 'highlight.js/styles/solarized-light.css';
 
+highlight.initHighlightingOnLoad();
 class DevTools extends Component {
   constructor(props) {
     super(props);
@@ -25,31 +27,37 @@ class DevTools extends Component {
 
       switch (key) {
         case 'home':
-          this.props.tasks.import(`{
-            "Allumer la litière": {
+          this.props.tasks.import(`[
+            {
+              "name": "Allumer la litière",
               "executionDateList": []
             },
-            "Vendre la poubelle": {
+            {
+              "name": "Vendre la poubelle",
               "executionDateList": []
             },
-            "Manger le frigo": {
+            {
+              "name": "Manger le frigo",
               "executionDateList": []
             }
-          }`);
+          ]`);
           break;
 
         case 'activity':
-          this.props.tasks.import(`{
-            "Tirer le pinpon": {
+          this.props.tasks.import(`[
+            {
+              "name": "Tirer le pinpon",
               "executionDateList": []
             },
-            "Pousser la tiroulette": {
+            {
+              "name": "Pousser la tiroulette",
               "executionDateList": []
             },
-            "Lever la fourbinette": {
+            {
+              "name": "Lever la fourbinette",
               "executionDateList": []
             }
-          }`);
+          ]`);
           break;
 
         default:
