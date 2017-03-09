@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Alert, Button, Col, Form, FormGroup, Label, Input, Row } from 'reactstrap';
-import { sortByNextExecutionDate } from './Tasks';
+import { sortByNextExecutionDate } from '../TasksModel';
 
 class TaskList extends Component {
   constructor(props) {
