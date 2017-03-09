@@ -107,11 +107,12 @@ class Tasks {
     return this.tasks.find(task => name === task.name);
   }
 
-  execute(taskName) {
+  execute(taskName, datetime = null) {
     const task = this.getTask(taskName);
+    const executionDate = datetime || moment();
 
-    task.executionDateList.push(moment().toISOString());
-    task.executionDateList = task.executionDateList.slice(-10);
+    task.executionDateList.push(executionDate.toISOString());
+    task.executionDateList = task.executionDateList.slice(-10).sort();
     this._notifyListener();
   }
 
