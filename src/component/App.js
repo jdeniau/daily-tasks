@@ -14,15 +14,18 @@ class App extends Component {
   }
 
   render() {
+    const { tasks } = this.props;
+
     return (
       <div>
-        <TasksList tasks={this.props.tasks} />
+        <h1 className="text-center">{tasks.getCurrentBoard()}</h1>
+        <TasksList tasks={tasks} />
 
-        <Button color="warning" onClick={this.props.tasks.clearTasks}>
+        <Button color="warning" onClick={() => tasks.clearTasks()}>
           Clear tasks
         </Button>
 
-        {this.props.isDev && <DevTools tasks={this.props.tasks} />}
+        {this.props.isDev && <DevTools tasks={tasks} />}
       </div>
     );
   }

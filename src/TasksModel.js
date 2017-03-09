@@ -4,6 +4,7 @@ class Task {
   constructor(values) {
     this.name = values.name;
     this.executionDateList = values.executionDateList;
+    this.board = values.board;
   }
 
   getLastExecutionDate() {
@@ -81,6 +82,10 @@ class Tasks {
     return this.tasks.map(values => new Task(values));
   }
 
+  getCurrentBoard() {
+    return 'main';
+  }
+
   addListener(listener) {
     this._listeners.push(listener);
   }
@@ -88,6 +93,7 @@ class Tasks {
   addTask(name) {
     this.tasks.push(new Task({
       name,
+      board: 'main',
       executionDateList: [],
     }));
 

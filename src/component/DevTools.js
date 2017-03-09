@@ -29,14 +29,17 @@ class DevTools extends Component {
         case 'home':
           this.props.tasks.import(`[
             {
+              "board": "main",
               "name": "Allumer la litière",
               "executionDateList": []
             },
             {
+              "board": "main",
               "name": "Vendre la poubelle",
               "executionDateList": []
             },
             {
+              "board": "main",
               "name": "Manger le frigo",
               "executionDateList": []
             }
@@ -46,14 +49,17 @@ class DevTools extends Component {
         case 'activity':
           this.props.tasks.import(`[
             {
+              "board": "main",
               "name": "Tirer le pinpon",
               "executionDateList": []
             },
             {
+              "board": "main",
               "name": "Pousser la tiroulette",
               "executionDateList": []
             },
             {
+              "board": "main",
               "name": "Lever la fourbinette",
               "executionDateList": []
             }
