@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Alert, Button, Col, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Alert, Button, Col, Form, FormGroup, Label, Input, Row } from 'reactstrap';
 import { sortByNextExecutionDate } from './Tasks';
 
 class TaskList extends Component {
@@ -26,22 +26,24 @@ class TaskList extends Component {
             .sort(sortByNextExecutionDate)
               .map(task =>
             <Alert color={task.isPast() ? 'danger' : 'success'} key={task.name}>
-              <div>{task.name}</div>
+              <h2 className="text-center">{task.name}</h2>
 
-              <div>
-                Last execution:
-                {task.getLastExecutionDate() && moment(task.getLastExecutionDate()).fromNow()}
-              </div>
+              <Row>
+                <Col xs="12" sm="4">
+                  Last execution:
+                  {task.getLastExecutionDate() && moment(task.getLastExecutionDate()).fromNow()}
+                </Col>
 
-              <div>
-                Frequency:
-                {task.getHumanizedAverageExectionInterval()}
-              </div>
+                <Col xs="12" sm="4">
+                  Frequency:
+                  {task.getHumanizedAverageExectionInterval()}
+                </Col>
 
-              <div>
-                Next execution:
-                {task.getNextExecutionDate() && task.getNextExecutionDate().fromNow()}
-              </div>
+                <Col xs="12" sm="4">
+                  Next execution:
+                  {task.getNextExecutionDate() && task.getNextExecutionDate().fromNow()}
+                </Col>
+              </Row>
 
               <Button
                 color="primary"
