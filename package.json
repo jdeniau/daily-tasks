@@ -1,6 +1,6 @@
 {
   "name": "daily-tasks",
-  "homepage": "https://jdeniau.github.io/daily-tasks",
+  "homepage": "http://daily-tasks.deniau.me",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
