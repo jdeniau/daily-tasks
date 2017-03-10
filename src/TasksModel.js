@@ -73,44 +73,65 @@ class Task {
 }
 
 class Tasks {
-  constructor(tasks = []) {
-    this.tasks = tasks || [];
+  constructor(tasks, currentBoard) {
+    this._init(tasks, currentBoard);
     this._listeners = [];
   }
 
   getTaskList() {
-    return this.tasks.map(values => new Task(values));
+    return this._tasks
+      .map(values => new Task(values))
+      .filter(task => task.board === this._currentBoard)
+    ;
   }
 
   getCurrentBoard() {
-    return 'main';
+    return this._currentBoard;
+  }
+
+  setCurrentBoard(board) {
+    this._currentBoard = board;
+
+    this._notifyListener();
+  }
+
+  getBoardList() {
+    return this._tasks
+      .map(task => task.board)
+      .filter((board, index, list) => list.indexOf(board) === index)
+    ;
   }
 
   addListener(listener) {
     this._listeners.push(listener);
   }
 
-  addTask(name) {
-    this.tasks.push(new Task({
+  addTask(name, board = this.getCurrentBoard()) {
+    this._tasks.push(new Task({
       name,
-      board: 'main',
+      board,
       executionDateList: [],
     }));
+
+    // if only one task, then the currentboard should be the boad of this task
+    if (this._tasks.length === 1) {
+      this._currentBoard = this._tasks[0].board;
+    }
 
     this._notifyListener();
   }
 
   clearTasks() {
-    this.tasks = [];
+    this._tasks = [];
     this._notifyListener();
   }
 
   getTaskNameList() {
-    return this.tasks.map(t => t.name);
+    return this._tasks.map(t => t.name);
   }
 
   getTask(name) {
-    return this.tasks.find(task => name === task.name);
+    return this._tasks.find(task => name === task.name);
   }
 
   execute(taskName, datetime = null) {
@@ -124,13 +145,21 @@ class Tasks {
 
   export(prettyPrint = false) {
     return prettyPrint ?
-      JSON.stringify(this.getTaskList(), null, 2) :
-      JSON.stringify(this.tasks);
+      JSON.stringify(this._tasks, null, 2) :
+      JSON.stringify(this._tasks);
   }
 
   import(string) {
-    this.tasks = JSON.parse(string).map(task => new Task(task));
+    this._init(JSON.parse(string).map(task => new Task(task)), 'main');
     this._notifyListener();
+  }
+
+  _init(tasks, currentBoard) {
+    this._tasks = tasks || [];
+    this._currentBoard = currentBoard || 'main';
+    if (this.getBoardList().indexOf(currentBoard) < 0) {
+      this._currentBoard = 'main';
+    }
   }
 
   _notifyListener() {

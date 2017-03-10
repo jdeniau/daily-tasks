@@ -62,6 +62,11 @@ class DevTools extends Component {
               "board": "main",
               "name": "Lever la fourbinette",
               "executionDateList": []
+            },
+            {
+              "board": "second",
+              "name": "Charbiller les esgourdettes",
+              "executionDateList": []
             }
           ]`);
           break;

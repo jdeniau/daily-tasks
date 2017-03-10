@@ -8,7 +8,10 @@ import TaskLogger from './listener/TaskLogger';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const tasks = new TasksModel(JSON.parse(window.localStorage.getItem('tasks')));
+const tasks = new TasksModel(
+  JSON.parse(window.localStorage.getItem('tasks')),
+  window.localStorage.getItem('currentBoard')
+);
 tasks.addListener(new TaskSaver());
 if (isDev) {
   tasks.addListener(new TaskLogger());

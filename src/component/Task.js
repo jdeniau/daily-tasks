@@ -4,12 +4,12 @@ import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import { Alert, Button, Col, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 
-function ExecuteModal({ isOpen, onCancel, onSubmit }) {
+function ExecuteModal({ header, isOpen, onCancel, onSubmit }) {
   let datetime = moment();
 
   return (
     <Modal isOpen={isOpen} toggle={onCancel}>
-      <ModalHeader toggle={onCancel}>Modal title</ModalHeader>
+      <ModalHeader toggle={onCancel}>{header}</ModalHeader>
       <ModalBody>
         <Datetime
           defaultValue={datetime}
@@ -82,6 +82,7 @@ class Task extends Component {
         </Button>
 
         <ExecuteModal
+          header={task.name}
           isOpen={this.state.isModalOpened}
           onSubmit={this.handleExecuteTask}
           onCancel={this.toggleModal}
