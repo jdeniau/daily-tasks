@@ -15,13 +15,24 @@ class AddTaskForm extends PureComponent {
     };
   }
 
-  handleSubmit() {
+  handleSubmit(event) {
+    event.preventDefault();
+
     this.props.onSubmit(this.state.name, this.state.board);
 
     this.setState(() => ({
       name: '',
       board: this.props.currentBoard,
     }));
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentBoard !== this.props.currentBoard) {
+      this.setState({
+        name: '',
+        board: this.props.currentBoard,
+      });
+    }
   }
 
   handleBoardChange(e) {

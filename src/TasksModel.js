@@ -83,10 +83,9 @@ class Task {
 }
 
 class Tasks {
-  constructor(DB_SUFFIX,currentBoard) {
+  constructor(DB_SUFFIX) {
     this.database = new PouchDB(`daily-tasks-${DB_SUFFIX}`);
 
-    console.log(DB_SUFFIX);
     const REMOTE_DATABASE = `http://fry.sitioweb.fr:5984/daily-tasks-${DB_SUFFIX}`;
     PouchDB.sync(this.database, REMOTE_DATABASE, {
       live: true,
@@ -95,7 +94,7 @@ class Tasks {
 
     this._listeners = [];
 
-    return this._init(currentBoard);
+    return this._init();
   }
 
   getTaskList() {
@@ -110,7 +109,7 @@ class Tasks {
   }
 
   setCurrentBoard(board) {
-    this._currentBoard = board;
+    this._setCurrentBoard(board);
 
     this._notifyListener();
   }
@@ -140,7 +139,7 @@ class Tasks {
 
         // if only one task, then the currentboard should be the boad of this task
         if (this._tasks.length === 1) {
-          this._currentBoard = this._tasks[0].board;
+          this._setCurrentBoard(this._tasks[0].board);
         }
 
         this._notifyListener();
@@ -187,7 +186,7 @@ class Tasks {
         const tasks = JSON.parse(string).map(task => new Task(task));
         return this.database.bulkDocs(tasks);
       })
-      .then(() => this._init('main'))
+      .then(() => this._init())
       .then(() => this._notifyListener())
     ;
   }
@@ -199,19 +198,30 @@ class Tasks {
     }))
   }
 
-  _init(currentBoard) {
+  _init() {
     return this.database.allDocs({ include_docs: true })
       .then(result => {
         this._tasks = result.rows.map(row => new Task(row.doc));
 
-        this._currentBoard = currentBoard || 'main';
-        if (this.getBoardList().indexOf(currentBoard) < 0) {
-          this._currentBoard = 'main';
-        }
+        const currentBoard = window.localStorage.getItem('currentBoard');
+        this._setCurrentBoard(currentBoard);
 
         return this;
       })
     ;
+  }
+
+  _setCurrentBoard(currentBoard) {
+    this._currentBoard = currentBoard || 'main';
+    if (this.getBoardList().indexOf(currentBoard) < 0) {
+      if (this._tasks.length > 0) {
+        this._currentBoard = this._tasks[0].board;
+      } else {
+        this._currentBoard = 'main';
+      }
+    }
+
+    window.localStorage.setItem('currentBoard', this._currentBoard);
   }
 
   _notifyListener() {

@@ -19,13 +19,9 @@ if (!DB_SUFFIX) {
     document.getElementById('root')
   );
 } else {
-  console.log(DB_SUFFIX);
   window.localStorage.setItem('currentDb', DB_SUFFIX);
 
-  const tasks = new TasksModel(
-    DB_SUFFIX,
-    window.localStorage.getItem('currentBoard')
-  );
+  const tasks = new TasksModel(DB_SUFFIX);
 
   tasks.then((tasks) => {
     // tasks.addListener(new TaskSaver());
