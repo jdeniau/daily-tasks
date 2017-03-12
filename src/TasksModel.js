@@ -1,8 +1,6 @@
 import moment from 'moment';
 import PouchDB  from 'pouchdb-browser';
 
-const REMOTE_DATABASE = 'http://fry.sitioweb.fr:5984/my_database';
-
 class Task {
   constructor(values) {
     this.name = values.name;
@@ -85,9 +83,11 @@ class Task {
 }
 
 class Tasks {
-  constructor(currentBoard) {
-    this.database = new PouchDB('my_database');
+  constructor(DB_SUFFIX,currentBoard) {
+    this.database = new PouchDB(`daily-tasks-${DB_SUFFIX}`);
 
+    console.log(DB_SUFFIX);
+    const REMOTE_DATABASE = `http://fry.sitioweb.fr:5984/daily-tasks-${DB_SUFFIX}`;
     PouchDB.sync(this.database, REMOTE_DATABASE, {
       live: true,
       retry: true,

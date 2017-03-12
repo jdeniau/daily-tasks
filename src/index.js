@@ -7,23 +7,40 @@ import TaskLogger from './listener/TaskLogger';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const tasks = new TasksModel(
-  window.localStorage.getItem('currentBoard')
-);
+const suffixQuery = window.location.search.match(/dbSuffix=([a-zA-Z0-9\-]+)/);
+const DB_SUFFIX = suffixQuery ? suffixQuery[1]
+  : window.localStorage.getItem('currentDb');
 
-tasks.then((tasks) => {
-  // tasks.addListener(new TaskSaver());
-  if (isDev) {
-    tasks.addListener(new TaskLogger());
-  }
-
-
-
+if (!DB_SUFFIX) {
   ReactDOM.render(
-    <App
-      tasks={tasks}
-      isDev={isDev}
-    />,
+    <div>
+      No database selected
+    </div>,
     document.getElementById('root')
   );
-});
+} else {
+  console.log(DB_SUFFIX);
+  window.localStorage.setItem('currentDb', DB_SUFFIX);
+
+  const tasks = new TasksModel(
+    DB_SUFFIX,
+    window.localStorage.getItem('currentBoard')
+  );
+
+  tasks.then((tasks) => {
+    // tasks.addListener(new TaskSaver());
+    if (isDev) {
+      tasks.addListener(new TaskLogger());
+    }
+
+
+
+    ReactDOM.render(
+      <App
+        tasks={tasks}
+        isDev={isDev}
+      />,
+      document.getElementById('root')
+    );
+  });
+}
