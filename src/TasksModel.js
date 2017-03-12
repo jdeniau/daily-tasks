@@ -1,10 +1,16 @@
 import moment from 'moment';
+import PouchDB  from 'pouchdb-browser';
+
+const REMOTE_DATABASE = 'http://fry.sitioweb.fr:5984/my_database';
 
 class Task {
   constructor(values) {
     this.name = values.name;
     this.executionDateList = values.executionDateList;
     this.board = values.board;
+
+    this._id = `${this.board}|${this.name}`;
+    this._rev = values._rev;
   }
 
   getLastExecutionDate() {
@@ -70,12 +76,26 @@ class Task {
     return nextExecutionDate && nextExecutionDate < now;
   }
 
+  execute(datetime) {
+    const executionDate = datetime || moment();
+
+    this.executionDateList.push(executionDate.toISOString());
+    this.executionDateList = this.executionDateList.slice(-10).sort();
+  }
 }
 
 class Tasks {
-  constructor(tasks, currentBoard) {
-    this._init(tasks, currentBoard);
+  constructor(currentBoard) {
+    this.database = new PouchDB('my_database');
+
+    PouchDB.sync(this.database, REMOTE_DATABASE, {
+      live: true,
+      retry: true,
+    });
+
     this._listeners = [];
+
+    return this._init(currentBoard);
   }
 
   getTaskList() {
@@ -107,23 +127,34 @@ class Tasks {
   }
 
   addTask(name, board = this.getCurrentBoard()) {
-    this._tasks.push(new Task({
+    const task = new Task({
       name,
       board,
       executionDateList: [],
-    }));
+    });
 
-    // if only one task, then the currentboard should be the boad of this task
-    if (this._tasks.length === 1) {
-      this._currentBoard = this._tasks[0].board;
-    }
+    this
+      .database.put(task)
+      .then(() => {
+        this._tasks.push(task);
 
-    this._notifyListener();
+        // if only one task, then the currentboard should be the boad of this task
+        if (this._tasks.length === 1) {
+          this._currentBoard = this._tasks[0].board;
+        }
+
+        this._notifyListener();
+      })
+    ;
   }
 
   clearTasks() {
-    this._tasks = [];
-    this._notifyListener();
+    this._deleteAllDocs()
+      .then(() => {
+        this._tasks = [];
+        this._notifyListener();
+      })
+    ;
   }
 
   getTaskNameList() {
@@ -136,11 +167,11 @@ class Tasks {
 
   execute(taskName, datetime = null) {
     const task = this.getTask(taskName);
-    const executionDate = datetime || moment();
+    task.execute(datetime);
 
-    task.executionDateList.push(executionDate.toISOString());
-    task.executionDateList = task.executionDateList.slice(-10).sort();
-    this._notifyListener();
+    this.database.put(task)
+      .then(() => this._notifyListener())
+    ;
   }
 
   export(prettyPrint = false) {
@@ -150,16 +181,37 @@ class Tasks {
   }
 
   import(string) {
-    this._init(JSON.parse(string).map(task => new Task(task)), 'main');
-    this._notifyListener();
+    this
+      ._deleteAllDocs()
+      .then(() => {
+        const tasks = JSON.parse(string).map(task => new Task(task));
+        return this.database.bulkDocs(tasks);
+      })
+      .then(() => this._init('main'))
+      .then(() => this._notifyListener())
+    ;
   }
 
-  _init(tasks, currentBoard) {
-    this._tasks = tasks || [];
-    this._currentBoard = currentBoard || 'main';
-    if (this.getBoardList().indexOf(currentBoard) < 0) {
-      this._currentBoard = 'main';
-    }
+  _deleteAllDocs() {
+    return this.database.bulkDocs(this._tasks.map(t => {
+      t._deleted = true;
+      return t;
+    }))
+  }
+
+  _init(currentBoard) {
+    return this.database.allDocs({ include_docs: true })
+      .then(result => {
+        this._tasks = result.rows.map(row => new Task(row.doc));
+
+        this._currentBoard = currentBoard || 'main';
+        if (this.getBoardList().indexOf(currentBoard) < 0) {
+          this._currentBoard = 'main';
+        }
+
+        return this;
+      })
+    ;
   }
 
   _notifyListener() {

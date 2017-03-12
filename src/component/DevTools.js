@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/solarized-light.css';
 
-highlight.initHighlightingOnLoad();
 class DevTools extends Component {
   constructor(props) {
     super(props);
 
     this.handleImport = this.handleImport.bind(this);
     this.handleImportDemoData = this.handleImportDemoData.bind(this);
+  }
+
+  componentDidMount() {
+    highlight.highlightBlock(this.codeBlock);
   }
 
   componentDidUpdate() {
