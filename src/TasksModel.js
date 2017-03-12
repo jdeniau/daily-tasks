@@ -90,7 +90,22 @@ class Tasks {
     PouchDB.sync(this.database, REMOTE_DATABASE, {
       live: true,
       retry: true,
-    });
+    })
+      .on('change', (info) => {
+        if (info.direction === 'pull' && info.change.ok) {
+          info.change.docs.forEach(doc => {
+            const oldTaskIndex = this._tasks.findIndex((t) => t._id === doc._id);
+            if (oldTaskIndex >= 0) {
+              this._tasks[oldTaskIndex] = new Task(doc);
+            } else {
+              this._tasks.push(new Task(doc));
+            }
+          });
+
+          this._notifyListener();
+        }
+      })
+    ;
 
     this._listeners = [];
 
