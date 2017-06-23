@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Button, Col, Form, FormGroup, Label, Input } from 'reactstrap';
+import translate from '../translations';
 
 class AddTaskForm extends PureComponent {
   constructor(props) {
@@ -51,12 +52,12 @@ class AddTaskForm extends PureComponent {
     return (
       <Form onSubmit={this.handleSubmit}>
         <FormGroup row>
-          <Label for="addTask" sm={2}>Add task</Label>
+          <Label for="addTask" sm={2}>{translate('Add task')}</Label>
           <Col sm={10}>
             <Input
               type="text"
               id="addTask"
-              placeholder="task name"
+              placeholder={translate('task name')}
               value={this.state.name}
               onChange={this.handleNameChange}
             />
@@ -64,7 +65,7 @@ class AddTaskForm extends PureComponent {
         </FormGroup>
 
         <FormGroup row>
-          <Label for="addBoard" sm={2}>Board</Label>
+          <Label for="addBoard" sm={2}>{translate('Board')}</Label>
           <Col sm={10}>
             <Input
               type="text"
@@ -82,7 +83,7 @@ class AddTaskForm extends PureComponent {
               color="secondary"
               type="submit"
             >
-              Add
+              {translate('Add')}
             </Button>
           </Col>
         </FormGroup>

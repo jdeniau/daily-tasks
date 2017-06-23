@@ -1,0 +1,15 @@
+export default {
+  'Clear tasks': 'Vider les tâches',
+  'Last execution': 'Dernière exécution',
+  'Frequency': 'Fréquence',
+  'Next execution': 'Prochaine exécution',
+  'execute': 'exécuter',
+  'Submit': 'Soumettre',
+  'Cancel': 'Annuler',
+  'Skip this time': 'Sauter cette fois',
+  'current board': 'tableau courant',
+  'task name': 'nom de la tâche',
+  'Add': 'Ajouter',
+  'Add task': 'Ajouter une tâche',
+  'Board': 'Tableau',
+}

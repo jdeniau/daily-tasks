@@ -3,6 +3,7 @@ import moment from 'moment';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import { Alert, Button, Col, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
+import translate from '../translations';
 
 function ExecuteModal({ header, isOpen, onCancel, onSubmit, onSkip }) {
   let datetime = moment();
@@ -18,12 +19,12 @@ function ExecuteModal({ header, isOpen, onCancel, onSubmit, onSkip }) {
           timeConstraints={{ minutes: { step: 15 } }}
         />
         <Button style={{ marginTop: '10px', float: 'right' }} color="warning" onClick={onSkip}>
-          Skip this time
+          {translate('Skip this time')}
         </Button>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={() => onSubmit(datetime)}>Submit</Button>{' '}
-        <Button color="secondary" onClick={onCancel}>Cancel</Button>
+        <Button color="primary" onClick={() => onSubmit(datetime)}>{translate('Submit')}</Button>{' '}
+        <Button color="secondary" onClick={onCancel}>{translate('Cancel')}</Button>
       </ModalFooter>
     </Modal>
   );
@@ -73,17 +74,17 @@ class Task extends Component {
 
         <Row>
           <Col xs="12" sm="4">
-            Last execution:
+            {translate('Last execution')}:
             {task.getLastExecutionDate() && moment(task.getLastExecutionDate()).fromNow()}
           </Col>
 
           <Col xs="12" sm="4">
-            Frequency:
+            {translate('Frequency')}:
             {task.getHumanizedAverageExectionInterval()}
           </Col>
 
           <Col xs="12" sm="4">
-            Next execution:
+            {translate('Next execution')}:
             {task.getNextExecutionDate() && task.getNextExecutionDate().fromNow()}
           </Col>
         </Row>
@@ -93,7 +94,7 @@ class Task extends Component {
           block
           onClick={this.toggleModal}
         >
-          execute
+          {translate('execute')}
         </Button>
 
         <ExecuteModal

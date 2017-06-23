@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import DevTools from './DevTools';
 import TasksList from './TasksList';
 import BoardList from './BoardList';
-
+import translate from '../translations';
 
 class App extends Component {
   constructor(props) {
@@ -13,6 +13,7 @@ class App extends Component {
 
     this.handleBoardChange = this.handleBoardChange.bind(this);
     this.handleBoardListClick = this.handleBoardListClick.bind(this);
+
 
     this.state = {
       isBoardListOpened: false,
@@ -41,32 +42,32 @@ class App extends Component {
     const { tasks } = this.props;
 
     return (
-      <div>
-        <h1 className="text-center">
-          {tasks.getCurrentBoard()}
-          <a
-            href="#openBoardList"
-            className="ml-2"
-            onClick={this.handleBoardListClick}
-          >
-            {tasks.getBoardList().length > 1 &&
-              <MdContentCopy />
-            }
-          </a>
-        </h1>
-        <TasksList tasks={tasks} />
+        <div>
+          <h1 className="text-center">
+            {tasks.getCurrentBoard()}
+            <a
+              href="#openBoardList"
+              className="ml-2"
+              onClick={this.handleBoardListClick}
+            >
+              {tasks.getBoardList().length > 1 &&
+                  <MdContentCopy />
+              }
+            </a>
+          </h1>
+          <TasksList tasks={tasks} />
 
-        <Button color="warning" onClick={() => tasks.clearTasks()}>
-          Clear tasks
-        </Button>
+          <Button color="warning" onClick={() => tasks.clearTasks()}>
+            {translate('Clear tasks')}
+          </Button>
 
-        <BoardList
-          onChange={this.handleBoardChange}
-          toggle={this.handleBoardListClick}
-          isOpen={this.state.isBoardListOpened}
-          boardList={tasks.getBoardList()}
-          currentBoard={tasks.getCurrentBoard()}
-        />
+          <BoardList
+            onChange={this.handleBoardChange}
+            toggle={this.handleBoardListClick}
+            isOpen={this.state.isBoardListOpened}
+            boardList={tasks.getBoardList()}
+            currentBoard={tasks.getCurrentBoard()}
+          />
 
         {this.props.isDev && <DevTools tasks={tasks} />}
       </div>
