@@ -4,7 +4,7 @@ import App from './component/App';
 import './index.css';
 import TaskList from './model/TaskList';
 import TaskLogger from './listener/TaskLogger';
-import registerServiceWorker from './registerServiceWorker';
+// import registerServiceWorker from './registerServiceWorker';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -34,7 +34,7 @@ function load() {
     );
   });
 
-  registerServiceWorker();
+  // registerServiceWorker();
 }
 
 if (!DB_SUFFIX) {
