@@ -27,6 +27,7 @@ class TaskList extends Component {
                   key={task.name}
                   task={task}
                   executeTask={(datetime) => this.props.tasks.execute(task.name, datetime)}
+                  skipTask={() => this.props.tasks.skip(task.name)}
                 />
           )}
         </div>

@@ -4,7 +4,7 @@ import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import { Alert, Button, Col, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 
-function ExecuteModal({ header, isOpen, onCancel, onSubmit }) {
+function ExecuteModal({ header, isOpen, onCancel, onSubmit, onSkip }) {
   let datetime = moment();
 
   return (
@@ -17,6 +17,9 @@ function ExecuteModal({ header, isOpen, onCancel, onSubmit }) {
           onChange={(value) => datetime = value}
           timeConstraints={{ minutes: { step: 15 } }}
         />
+        <Button style={{ marginTop: '10px', float: 'right' }} color="warning" onClick={onSkip}>
+          Skip this time
+        </Button>
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={() => onSubmit(datetime)}>Submit</Button>{' '}
@@ -32,6 +35,7 @@ class Task extends Component {
 
     this.toggleModal = this.toggleModal.bind(this);
     this.handleExecuteTask = this.handleExecuteTask.bind(this);
+    this.handleSkipTask = this.handleSkipTask.bind(this);
 
     this.state = {
       isModalOpened: false,
@@ -47,6 +51,13 @@ class Task extends Component {
   handleExecuteTask(datetime) {
     this.props.executeTask(datetime);
     this.toggleModal();
+  }
+
+  handleSkipTask(datetime) {
+    if (window.confirm('Sure ?')) {
+      this.props.skipTask(datetime);
+      this.toggleModal();
+    }
   }
 
   render() {
@@ -90,6 +101,7 @@ class Task extends Component {
           isOpen={this.state.isModalOpened}
           onSubmit={this.handleExecuteTask}
           onCancel={this.toggleModal}
+          onSkip={this.handleSkipTask}
         />
       </Alert>
     );

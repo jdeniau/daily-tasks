@@ -64,6 +64,7 @@ class TaskList {
       name,
       board,
       executionDateList: [],
+      skipNumber: 0,
     });
 
     this
@@ -101,6 +102,15 @@ class TaskList {
   execute(taskName, datetime = null) {
     const task = this.getTask(taskName);
     task.execute(datetime);
+
+    this.database.put(task)
+      .then(() => this._notifyListener())
+    ;
+  }
+
+  skip(taskName) {
+    const task = this.getTask(taskName);
+    task.skip();
 
     this.database.put(task)
       .then(() => this._notifyListener())

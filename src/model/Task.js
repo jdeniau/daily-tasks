@@ -5,6 +5,7 @@ export default class Task {
     this.name = values.name;
     this.executionDateList = values.executionDateList;
     this.board = values.board;
+    this.skipNumber = values.skipNumber || 0;
 
     this._id = `${this.board}|${this.name}`;
     this._rev = values._rev;
@@ -60,8 +61,9 @@ export default class Task {
 
     const lastExecution = this.getLastExecutionDate();
 
+    const interval = this.getAverageExectionInterval() * (1 + this.skipNumber);
     const nextExecution = moment(lastExecution)
-      .add(this.getAverageExectionInterval());
+      .add(interval);
 
     return nextExecution;
   }
@@ -73,11 +75,16 @@ export default class Task {
     return nextExecutionDate && nextExecutionDate < now;
   }
 
+  skip() {
+    this.skipNumber += 1;
+  }
+
   execute(datetime) {
     const executionDate = datetime || moment();
 
     this.executionDateList.push(executionDate.toISOString());
     this.executionDateList = this.executionDateList.slice(-10).sort();
+    this.skipNumber = 0;
   }
 }
 
