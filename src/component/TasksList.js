@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { sortByNextExecutionDate } from '../TasksModel';
+import { compareNextExecutionDate } from '../model/Task';
 import Task from './Task';
 import AddTaskForm from './AddTaskForm';
 
@@ -21,7 +21,7 @@ class TaskList extends Component {
       <div>
         <div>
           {tasks.getTaskList()
-            .sort(sortByNextExecutionDate)
+            .sort(compareNextExecutionDate)
               .map(task =>
                 <Task
                   key={task.name}

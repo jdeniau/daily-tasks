@@ -1,88 +1,7 @@
-import moment from 'moment';
 import PouchDB  from 'pouchdb-browser';
+import Task from './Task';
 
-class Task {
-  constructor(values) {
-    this.name = values.name;
-    this.executionDateList = values.executionDateList;
-    this.board = values.board;
-
-    this._id = `${this.board}|${this.name}`;
-    this._rev = values._rev;
-  }
-
-  getLastExecutionDate() {
-    if (this.executionDateList.length <= 0) {
-      return null;
-    }
-
-    return this.executionDateList.slice(-1)[0];
-  }
-
-  getAverageExectionInterval() {
-    if (this.executionDateList.length <= 0) {
-      return null;
-    }
-
-    const intervalList = this.executionDateList
-      .map(date => moment(date).valueOf())
-      .map((timestamp, index, executionList) => {
-        const lastValue = executionList[index - 1];
-        if (!lastValue) {
-          return null;
-        }
-        return timestamp - lastValue;
-      })
-      .filter(value => !!value)
-    ;
-
-    if (!intervalList.length) {
-      return null;
-    }
-
-    const tmpTotalMs = intervalList
-      .reduce((out, interval) => out += parseInt(intervalList, 10), 0)
-    ;
-    const tmpTotal = tmpTotalMs / 1000;
-
-    return moment.duration(tmpTotal / intervalList.length, 'seconds');
-  }
-
-  getHumanizedAverageExectionInterval() {
-    const average = this.getAverageExectionInterval();
-
-    return average && average.humanize();
-  }
-
-  getNextExecutionDate() {
-    if (this.executionDateList.length < 2) {
-      return null;
-    }
-
-    const lastExecution = this.getLastExecutionDate();
-
-    const nextExecution = moment(lastExecution)
-      .add(this.getAverageExectionInterval());
-
-    return nextExecution;
-  }
-
-  isPast() {
-    const nextExecutionDate = this.getNextExecutionDate();
-    const now = moment();
-
-    return nextExecutionDate && nextExecutionDate < now;
-  }
-
-  execute(datetime) {
-    const executionDate = datetime || moment();
-
-    this.executionDateList.push(executionDate.toISOString());
-    this.executionDateList = this.executionDateList.slice(-10).sort();
-  }
-}
-
-class Tasks {
+class TaskList {
   constructor(DB_SUFFIX) {
     this.database = new PouchDB(`daily-tasks-${DB_SUFFIX}`);
 
@@ -244,16 +163,4 @@ class Tasks {
   }
 }
 
-export function sortByNextExecutionDate(a, b) {
-  if (a.getNextExecutionDate() < b.getNextExecutionDate()) {
-    return -1;
-  }
-
-  if (a.getNextExecutionDate() > b.getNextExecutionDate()) {
-    return 1;
-  }
-
-  return 0;
-}
-
-export default Tasks;
+export default TaskList;

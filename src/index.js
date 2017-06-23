@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './component/App';
 import './index.css';
-import TasksModel from './TasksModel';
+import TaskList from './model/TaskList';
 import TaskLogger from './listener/TaskLogger';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -22,7 +22,7 @@ if (!DB_SUFFIX) {
 } else {
   window.localStorage.setItem('currentDb', DB_SUFFIX);
 
-  const tasks = new TasksModel(DB_SUFFIX);
+  const tasks = new TaskList(DB_SUFFIX);
 
   tasks.then((tasks) => {
     // tasks.addListener(new TaskSaver());
