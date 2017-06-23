@@ -4,10 +4,11 @@ import App from './component/App';
 import './index.css';
 import TasksModel from './TasksModel';
 import TaskLogger from './listener/TaskLogger';
+import registerServiceWorker from './registerServiceWorker';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const suffixQuery = window.location.search.match(/dbSuffix=([a-zA-Z0-9\-]+)/);
+const suffixQuery = window.location.search.match(/dbSuffix=([a-zA-Z0-9-]+)/);
 const DB_SUFFIX = suffixQuery ? suffixQuery[1]
   : window.localStorage.getItem('currentDb');
 
@@ -39,4 +40,6 @@ if (!DB_SUFFIX) {
       document.getElementById('root')
     );
   });
+
+  registerServiceWorker();
 }

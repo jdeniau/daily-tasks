@@ -94,12 +94,12 @@ class DevTools extends Component {
 
         <ul>
           <li>
-            <a href="#" onClick={this.handleImportDemoData('home')}>
+            <a href="#importHome" onClick={this.handleImportDemoData('home')}>
               Import home
             </a>
           </li>
           <li>
-            <a href="#" onClick={this.handleImportDemoData('activity')}>
+            <a href="#importActivity" onClick={this.handleImportDemoData('activity')}>
               Import activity
             </a>
           </li>
