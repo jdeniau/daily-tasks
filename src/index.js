@@ -12,14 +12,7 @@ const suffixQuery = window.location.search.match(/dbSuffix=([a-zA-Z0-9-]+)/);
 const DB_SUFFIX = suffixQuery ? suffixQuery[1]
   : window.localStorage.getItem('currentDb');
 
-if (!DB_SUFFIX) {
-  ReactDOM.render(
-    <div>
-      No database selected
-    </div>,
-    document.getElementById('root')
-  );
-} else {
+function load() {
   window.localStorage.setItem('currentDb', DB_SUFFIX);
 
   const tasks = new TaskList(DB_SUFFIX);
@@ -42,4 +35,19 @@ if (!DB_SUFFIX) {
   });
 
   registerServiceWorker();
+}
+
+if (!DB_SUFFIX) {
+  ReactDOM.render(
+    <div>
+      No database selected
+    </div>,
+    document.getElementById('root')
+  );
+} else {
+  const locale = window.navigator.userLanguage || window.navigator.language;
+  import (`moment/locale/${locale}`)
+    .then(load)
+    .catch(load)
+  ;
 }

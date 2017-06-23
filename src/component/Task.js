@@ -52,8 +52,12 @@ class Task extends Component {
   render() {
     const { task } = this.props;
 
+    const color = task.isPast() ?
+      'danger' :
+      task.getNextExecutionDate()? 'success' : 'warning';
+
     return (
-      <Alert color={task.isPast() ? 'danger' : 'success'} key={task.name}>
+      <Alert color={color} key={task.name}>
         <h2 className="text-center">{task.name}</h2>
 
         <Row>
