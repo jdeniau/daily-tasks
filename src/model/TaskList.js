@@ -5,7 +5,7 @@ class TaskList {
   constructor(DB_SUFFIX) {
     this.database = new PouchDB(`daily-tasks-${DB_SUFFIX}`);
 
-    const REMOTE_DATABASE = `http://fry.sitioweb.fr:5984/daily-tasks-${DB_SUFFIX}`;
+    const REMOTE_DATABASE = `http://leela.deniau.me:5984/daily-tasks-${DB_SUFFIX}`;
     PouchDB.sync(this.database, REMOTE_DATABASE, {
       live: true,
       retry: true,
